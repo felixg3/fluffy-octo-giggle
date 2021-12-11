@@ -1,0 +1,28 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+```{r}
+library(tidyverse)
+library(haven)
+iv_dataset2 <- read_dta("iv_dataset2.dta")
+dt2_assigned <- iv_dataset2$supplement_assigned
+dt2_treated <- iv_dataset2$supplement_received
+lm(iv_dataset2$performance~dt2_assigned)
+```
+```{r}
+library(AER)
+summary(ivreg(iv_dataset2$performance~dt2_treated | dt2_assigned))
+```
+The local average treatment effect indicates the average effect on those encouraged to take treatment through randomized encouragement, i.e. the compliying individuals. ATE is identical to LATE if compliance of subjects is representative of all individuals: whether students who took the nutritional supplement after being selected into the treatment group are representative of the rest of the students. In this case, we could assume homogenous effects and generalize the LATE to the whole treatment group, meaning, the LATE would be equivalent to the ATE.
+```{r}
+summary(lm(dt2_treated~dt2_assigned))
+predict(lm(dt2_treated~dt2_assigned))
+
+lm(iv_dataset2$performance ~ predict(lm(dt2_treated~dt2_assigned)))
+```
